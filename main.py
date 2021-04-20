@@ -3,6 +3,7 @@ from src.extras import clean, pause
 import src.menus as menus
 from time import sleep
 import src.matriz_real as matrices
+import src.matriz_compleja as complejas
 
 
 # ------------- Functions --------
@@ -25,6 +26,13 @@ def main():
             except: input('Error Presione enter para continuar')
         elif opc == 2:
             imaginarios = menus.size()
+            if imaginarios == 1:
+                datos = complejas.ingresar_matriz(3,3,'Ingresa los datos de la matriz de datos: ')
+                resultados = complejas.ingresar_matriz(3,1,'Ingresa los resultados: ')
+            elif reales == 2:
+                datos = complejas.ingresar_matriz(4,4,'Ingresa los datos de la matriz de datos: ')
+                resultados = complejas.ingresar_matriz(4,1,'Ingresa los resultados: ')
+            pause()
         elif opc == 3:
             print('Adios.')
             sleep(.5)

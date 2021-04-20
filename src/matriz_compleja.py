@@ -9,7 +9,15 @@ def imprimir_matriz(mat):
     for i in range(filas):
         for j in range(columnas):
             try:
-                print(f'{mat[i][j]}', end='\t')
+                if mat[i][j][0]:
+                    print(f'{mat[i][j][0]}', end='')
+                if mat[i][j][1] != 0:
+                    if mat[i][j][1] > 0:
+                        print(f'+{mat[i][j][1]}i', end='')
+                    else:
+                        print(f'-{mat[i][j][1]}i', end='')
+                print('\t')
+
                 if j == columnas-1: print()
             except:
                 pass
@@ -19,19 +27,24 @@ def ingresar_matriz(filas, columnas, text=''):
     ma=[]
     for i in range(filas):
         ma.append([])
-        for j in range(columnas):
+        for j in range(columnas * 2):
             clean()
             print(f'{text}')
             imprimir_matriz(ma)
             inc = True
+            if j % 2 == 0:
+                ma[i].append([])
+                parte = 'REAL'
+            else:
+                parte = 'COMPLEJA'
             while inc:
-                numero = input(f'\nIngresa el numero de la posicion {i+1},{j+1}: ')
+                numero = input(f'\nIngresa la parte {parte} de la posicion {i+1},{j+1}: ')
                 numero = convert_float(numero)
                 if numero:
-                    ma[i].append(numero)
+                    ma[i][j].append(numero)
                     inc = False
                 else:
-                    ma[i].append(0)
+                    ma[i][j].append(0)
                     inc = False
     clean()
     print('Matriz: ')
