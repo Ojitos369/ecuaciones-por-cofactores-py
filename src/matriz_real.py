@@ -23,16 +23,12 @@ def ingresar_matriz(filas, columnas, text=''):
             clean()
             print(f'{text}')
             imprimir_matriz(ma)
-            inc = True
-            while inc:
-                numero = input(f'\nIngresa el numero de la posicion {i+1},{j+1}: ')
-                numero = convert_float(numero)
-                if numero:
-                    ma[i].append(numero)
-                    inc = False
-                else:
-                    ma[i].append(0)
-                    inc = False
+            numero = input(f'\nIngresa el numero de la posicion {i+1},{j+1}: ')
+            numero = convert_float(numero)
+            if numero:
+                ma[i].append(numero)
+            else:
+                ma[i].append(0)
     clean()
     print('Matriz: ')
     imprimir_matriz(ma)
@@ -109,22 +105,65 @@ def determinante(mat):
 
 def solucion(datos, resultados):
     clean()
+    matrices = []
     determinantes = []
     determinante_original = determinante(datos)
-    longitud = len(datos)
-    print('Datos')
+    if determinante_original != 0:
+        longitud = len(datos)
+        for i in range(longitud):
+            matriz_auxiliar = []
+
+            for elemento in datos:
+                matriz_auxiliar.append(elemento[:])
+
+            for j in range(longitud):
+                matriz_auxiliar[j][i] = resultados[j][0]
+            
+            matrices.append(matriz_auxiliar)
+            determinantes.append(determinante(matriz_auxiliar))
+
+        mostrar = True
+        while mostrar:
+            clean()
+            print('Datos')
+            imprimir_matriz(datos)
+            print('Resultados')
+            imprimir_matriz(resultados)
+            for i in range(len(determinantes)):
+                resultado = round(determinantes[i]/determinante_original, 5)
+                print(f'El valor {i+1} es: {resultado}')
+            opc = str(input('\n1.- Mas info\n2.- Menu\nElige una opcion: '))
+            if opc == '1':
+                mostrar = masinfo(datos, determinante_original, matrices, determinantes)
+            elif opc == '2':
+                mostrar = False
+            else:
+                print('Opcion no valida intenta nuevamente')
+                pause()
+    else: 
+        print(f'La determinande de la matriz')
+        imprimir_matriz(datos)
+        print('Es 0, no se puede resolver por este metodo')
+
+def masinfo(datos, determinante_original, matrices, determinantes):
+    clean()
+    print('La determinante de la matriz: ')
     imprimir_matriz(datos)
-    print('Resultados')
-    imprimir_matriz(resultados)
-    for i in range(longitud):
-        matriz_auxiliar = []
-
-        for elemento in datos:
-            matriz_auxiliar.append(elemento[:])
-
-        for j in range(longitud):
-            matriz_auxiliar[j][i] = resultados[j][0]
-
-        determinantes.append(determinante(matriz_auxiliar))
-    for i in range(len(determinantes)):
-        print(f'El valor {i+1} es: {determinantes[i]/determinante_original}')
+    print(f'Es: {determinante_original}')
+    print()
+    for i in range(len(datos)):
+        print('La determinante de la matriz: ')
+        imprimir_matriz(matrices[i])
+        print(f'Es: {determinantes[i]}')
+        print()
+    
+    mostrar = True
+    while mostrar:
+        opc = str(input('\n1.- Regresar\n2.- Menu\nElige una opcion: '))
+        if opc == '1':
+            return True
+        elif opc == '2':
+            return False
+        else:
+            print('Opcion no valida intenta nuevamente')
+            input('Presiona Enter para continuar')

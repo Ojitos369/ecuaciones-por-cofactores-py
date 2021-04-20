@@ -22,8 +22,10 @@ def main():
                 resultados = matrices.ingresar_matriz(4,1,'Ingresa los resultados: ')
             try:
                 matrices.solucion(datos, resultados)
-                pause()
-            except: input('Error Presione enter para continuar')
+                #pause()
+            except:
+                pass
+
         elif opc == 2:
             imaginarios = menus.size()
             if imaginarios == 1:
@@ -32,7 +34,12 @@ def main():
             elif reales == 2:
                 datos = complejas.ingresar_matriz(4,4,'Ingresa los datos de la matriz de datos: ')
                 resultados = complejas.ingresar_matriz(4,1,'Ingresa los resultados: ')
-            pause()
+#            try:
+            complejas.solucion(datos, resultados)
+                #pause()
+#            except:
+#                pass
+
         elif opc == 3:
             print('Adios.')
             sleep(.5)
