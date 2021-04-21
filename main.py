@@ -11,24 +11,26 @@ import src.matriz_compleja as complejas
 def main():
     show_menu = True
     while show_menu:
-        opc = menus.main()
+        #opc = menus.main()
+        opc = 1
         if opc == 1:
             reales = menus.size()
             if reales == 1:
                 datos = matrices.ingresar_matriz(3,3,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(3,1,'Ingresa los resultados: ')
+                matrices.solucion(datos, resultados)
             elif reales == 2:
                 datos = matrices.ingresar_matriz(4,4,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(4,1,'Ingresa los resultados: ')
+                matrices.solucion(datos, resultados)
             elif reales == 3:
                 n = menus.numero()
                 datos = matrices.ingresar_matriz(n,n,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(n,1,'Ingresa los resultados: ')
-            try:
                 matrices.solucion(datos, resultados)
-                #pause()
-            except:
-                pass
+            else:
+                opc = 3
+                show_menu = False
 
         elif opc == 2:
             clean()

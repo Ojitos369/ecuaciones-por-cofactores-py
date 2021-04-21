@@ -41,10 +41,8 @@ def ingresar_matriz(filas, columnas, text=''):
 
 def determinante_base(mat):
     longitud = len(mat)
-    if longitud == 2:
-        a = mat[0][0] * mat[1][1]
-        b = mat[1][0] * mat[0][1]
-        return a - b
+    if longitud == 1:
+        return mat[0][0]
     else:
         determinante = 0
         resultados_cofactores = []
