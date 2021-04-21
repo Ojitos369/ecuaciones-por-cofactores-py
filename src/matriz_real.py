@@ -35,115 +35,98 @@ def ingresar_matriz(filas, columnas, text=''):
     pause()
     return ma
 
-def det3x3(mat):
-    primero = mat[0][0]*((mat[1][1]*mat[2][2])-(mat[1][2]*mat[2][1]))
-    segundo = mat[1][0]*((mat[0][1]*mat[2][2])-(mat[0][2]*mat[2][1]))
-    tercero = mat[2][0]*((mat[0][1]*mat[1][2])-(mat[0][2]*mat[1][1]))
-    determinante = primero-segundo+tercero
-    return determinante
+def determinante_base(mat):
+    longitud = len(mat)
+    if longitud == 2:
+        a = mat[0][0] * mat[1][1]
+        b = mat[1][0] * mat[0][1]
+        return a - b
+    else:
+        determinante = 0
+        resultados_cofactores = []
+        for i in range(longitud):
+            matriz_auxiliar = []
+            for j in range(longitud - 1):
+                matriz_auxiliar.append([])
+                for k in range(longitud - 1):
+                    matriz_auxiliar[j].append(1)
+            auxi=0
+            for j in range(longitud - 1):
+                if j==i: auxi+=1
+                auxj=1
+                for k in range(longitud - 1):
+                    matriz_auxiliar[j][k] = mat[j+auxi][k+auxj]
+            a = mat[i][0]
+            b = determinante_base(matriz_auxiliar)
+            c = a * b
+            imprimir_matriz(mat)
+            print(f'a: {a}')
+            print(f'b {b}')
+            print(f'c {c}')
+            resultados_cofactores.append(c)
+            #pause()
+        for i in range(len(resultados_cofactores)):
+            if i % 2 == 0:
+                determinante += resultados_cofactores[i]
+            else:
+                determinante -= resultados_cofactores[i]
+            print(f'cofactores: {resultados_cofactores}')
+            print(f'i: {i}')
+            print(f'determinante: {determinante}')
+            print(f'resultados de cofactor: {resultados_cofactores[i]}')
+            #pause()
+        return determinante
 
-def det4x4(mat):
-    aux3=[]
-    for i in range(3):
-        aux3.append([1,1,1])
+def solucion(datos, resultados):
+    clean()
+    filas = len(datos)
+    res_long = len(resultados)
+    columnas = len(datos[0])
 
-    auxi=0
-    for i in range(3):
-        if i==0: auxi+=1
-        auxj=0
-        for j in range(3):
-            if j==0: auxj+=1
-            aux3[i][j] = mat[i+auxi][j+auxj]
-    primero = mat[0][0] * det3x3(aux3)
+    if filas == columnas and res_long == filas:
+        matrices = []
+        determinantes = []
+        determinante_original = determinante_base(datos)
+        if determinante_original != 0:
+            longitud = len(datos)
+            for i in range(longitud):
+                matriz_auxiliar = []
 
-    auxi=0
-    for i in range(3):
-        if i==1: auxi+=1
-        auxj=0
-        for j in range(3):
-            if j==0: auxj+=1
-            aux3[i][j] = mat[i+auxi][j+auxj]
-    segundo = mat[1][0] * det3x3(aux3)
+                for elemento in datos:
+                    matriz_auxiliar.append(elemento[:])
 
-    auxi=0
-    for i in range(3):
-        if i==2: auxi+=1
-        auxj=0
-        for j in range(3):
-            if j==0: auxj+=1
-            aux3[i][j] = mat[i+auxi][j+auxj]
-    tercero = mat[2][0] * det3x3(aux3)
+                for j in range(longitud):
+                    matriz_auxiliar[j][i] = resultados[j][0]
+                
+                matrices.append(matriz_auxiliar)
+                determinantes.append(determinante_base(matriz_auxiliar))
 
-    auxi=0;
-    for i in range(3):
-        if i==3: auxi+=1
-        auxj=0
-        for j in range(3):
-            if j==0: auxj+=1
-            aux3[i][j] = mat[i+auxi][j+auxj]
-    cuarto = mat[3][0] * det3x3(aux3)
-
-    determinante = primero-segundo+tercero-cuarto;
-    return determinante;
-
-def determinante(mat):
-    filas = len(mat)
-    columnas = len(mat[0])
-    if filas == columnas:
-        if filas == 3:
-            return det3x3(mat)
-        elif filas == 4:
-            return det4x4(mat)
-        else:
-            print('Tranajando matrices mas grandes')
-            return False
+            mostrar = True
+            while mostrar:
+                clean()
+                print('Datos')
+                imprimir_matriz(datos)
+                print('Resultados')
+                imprimir_matriz(resultados)
+                for i in range(len(determinantes)):
+                    resultado = round(determinantes[i]/determinante_original, 5)
+                    print(f'El valor {i+1} es: {resultado}')
+                opc = str(input('\n1.- Mas info\n2.- Menu\nElige una opcion: '))
+                if opc == '1':
+                    mostrar = masinfo(datos, determinante_original, matrices, determinantes)
+                elif opc == '2':
+                    mostrar = False
+                else:
+                    print('Opcion no valida intenta nuevamente')
+                    pause()
+        else: 
+            print(f'La determinande de la matriz')
+            imprimir_matriz(datos)
+            print('Es 0, no se puede resolver por este metodo')
     else:
         print('Las filas y las columnas son de tamaños diferentes')
         print(f'Filas: {filas}')
         print(f'Columnas: {columnas}')
-    pause()
-
-def solucion(datos, resultados):
-    clean()
-    matrices = []
-    determinantes = []
-    determinante_original = determinante(datos)
-    if determinante_original != 0:
-        longitud = len(datos)
-        for i in range(longitud):
-            matriz_auxiliar = []
-
-            for elemento in datos:
-                matriz_auxiliar.append(elemento[:])
-
-            for j in range(longitud):
-                matriz_auxiliar[j][i] = resultados[j][0]
-            
-            matrices.append(matriz_auxiliar)
-            determinantes.append(determinante(matriz_auxiliar))
-
-        mostrar = True
-        while mostrar:
-            clean()
-            print('Datos')
-            imprimir_matriz(datos)
-            print('Resultados')
-            imprimir_matriz(resultados)
-            for i in range(len(determinantes)):
-                resultado = round(determinantes[i]/determinante_original, 5)
-                print(f'El valor {i+1} es: {resultado}')
-            opc = str(input('\n1.- Mas info\n2.- Menu\nElige una opcion: '))
-            if opc == '1':
-                mostrar = masinfo(datos, determinante_original, matrices, determinantes)
-            elif opc == '2':
-                mostrar = False
-            else:
-                print('Opcion no valida intenta nuevamente')
-                pause()
-    else: 
-        print(f'La determinande de la matriz')
-        imprimir_matriz(datos)
-        print('Es 0, no se puede resolver por este metodo')
 
 def masinfo(datos, determinante_original, matrices, determinantes):
     clean()
@@ -167,3 +150,12 @@ def masinfo(datos, determinante_original, matrices, determinantes):
         else:
             print('Opcion no valida intenta nuevamente')
             input('Presiona Enter para continuar')
+
+if __name__ == '__main__':
+    datos = [[3, 8, 1], [-4, 5, 7], [4, 2, -1]]
+    resultados = [[55], [30], [23]]
+    solucion(datos, resultados)
+
+    datos = [[1, 2, 4, -2], [5, 3, -8, 2], [7, -2, 10, -1], [11, 0, -1, -3]]
+    resultados = [[9], [-5], [29], [-4]]
+    solucion(datos, resultados)

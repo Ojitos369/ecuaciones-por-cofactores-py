@@ -20,6 +20,10 @@ def main():
             elif reales == 2:
                 datos = matrices.ingresar_matriz(4,4,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(4,1,'Ingresa los resultados: ')
+            elif reales == 3:
+                n = menus.numero()
+                datos = matrices.ingresar_matriz(n,n,'Ingresa los datos de la matriz de datos: ')
+                resultados = matrices.ingresar_matriz(n,1,'Ingresa los resultados: ')
             try:
                 matrices.solucion(datos, resultados)
                 #pause()
