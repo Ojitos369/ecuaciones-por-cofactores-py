@@ -27,15 +27,18 @@ def main():
                 pass
 
         elif opc == 2:
-            imaginarios = menus.size()
+            clean()
+            print('Arreglando errores, no disponible de momento. Lamentamos las molestias')
+            pause()
+            """ imaginarios = menus.size()
             if imaginarios == 1:
                 datos = complejas.ingresar_matriz(3,3,'Ingresa los datos de la matriz de datos: ')
                 resultados = complejas.ingresar_matriz(3,1,'Ingresa los resultados: ')
             elif reales == 2:
                 datos = complejas.ingresar_matriz(4,4,'Ingresa los datos de la matriz de datos: ')
-                resultados = complejas.ingresar_matriz(4,1,'Ingresa los resultados: ')
+                resultados = complejas.ingresar_matriz(4,1,'Ingresa los resultados: ') """
 #            try:
-            complejas.solucion(datos, resultados)
+            #complejas.solucion(datos, resultados)
                 #pause()
 #            except:
 #                pass

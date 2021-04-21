@@ -64,18 +64,24 @@ def ingresar_matriz(filas, columnas, text=''):
 
 def det3x3(mat):
     a = operaciones.producto(mat[1][1], mat[2][2])
-    b = operaciones.producto(mat[1][1], mat[2][2])
-    primero = operaciones.producto(mat[0][0], operaciones.resta(a, b))
+    b = operaciones.producto(mat[2][1], mat[1][2])
+    c = operaciones.resta(a, b)
+    primero = operaciones.producto(mat[0][0], c)
 
     a = operaciones.producto(mat[0][1], mat[2][2])
-    b = operaciones.producto(mat[0][2], mat[2][1])
-    segundo = operaciones.producto(mat[1][0], operaciones.resta(a, b))
+    b = operaciones.producto(mat[2][1], mat[0][2])
+    c = operaciones.resta(a, b)
+    segundo = operaciones.producto(mat[1][0], c)
+    print(f'{segundo}')
+
+    d = operaciones.resta(primero, segundo)
 
     a = operaciones.producto(mat[0][1], mat[1][2])
-    b = operaciones.producto(mat[0][2], mat[1][1])
-    tercero = operaciones.producto(mat[2][0], operaciones.resta(a, b))
-
-    determinante = operaciones.suma(primero, operaciones.resta(tercero, segundo))
+    b = operaciones.producto(mat[1][1], mat[0][2])
+    c = operaciones.resta(a, b)
+    tercero = operaciones.producto(mat[2][0], c)
+    
+    determinante = operaciones.suma(d, tercero)
     return determinante
 
 def det4x4(mat):
@@ -168,7 +174,7 @@ def solucion(datos, resultados):
             print('Resultados')
             imprimir_matriz(resultados)
             for i in range(len(determinantes)):
-                resultado = operaciones.division(determinantes[i], determinante_original)
+                resultado = operaciones.division(determinante_original, determinantes[i])
                 real = resultado[0] / resultado[2]
                 real = round(real, 5)
                 imaginaria = resultado[1] / resultado[2]
