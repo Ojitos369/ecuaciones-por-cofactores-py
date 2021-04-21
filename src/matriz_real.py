@@ -1,4 +1,9 @@
-from src.extras import clean, convert_float, pause
+try:
+    from src.extras import clean, convert_float, pause
+except:
+    from extras import clean, convert_float, pause
+import time
+import random
 def imprimir_matriz(mat):
     try:
         filas = len(mat)
@@ -13,7 +18,6 @@ def imprimir_matriz(mat):
                 if j == columnas-1: print()
             except:
                 pass
-                #print(mat)
 
 def ingresar_matriz(filas, columnas, text=''):
     ma=[]
@@ -60,21 +64,12 @@ def determinante_base(mat):
             b = determinante_base(matriz_auxiliar)
             c = a * b
             imprimir_matriz(mat)
-            print(f'a: {a}')
-            print(f'b {b}')
-            print(f'c {c}')
             resultados_cofactores.append(c)
-            #pause()
         for i in range(len(resultados_cofactores)):
             if i % 2 == 0:
                 determinante += resultados_cofactores[i]
             else:
                 determinante -= resultados_cofactores[i]
-            print(f'cofactores: {resultados_cofactores}')
-            print(f'i: {i}')
-            print(f'determinante: {determinante}')
-            print(f'resultados de cofactor: {resultados_cofactores[i]}')
-            #pause()
         return determinante
 
 def solucion(datos, resultados):
@@ -84,9 +79,12 @@ def solucion(datos, resultados):
     columnas = len(datos[0])
 
     if filas == columnas and res_long == filas:
+        inicio_de_tiempo = time.time()
         matrices = []
         determinantes = []
         determinante_original = determinante_base(datos)
+        fin_de_tiempo = time.time()
+        tiempo_determinante_original = fin_de_tiempo - inicio_de_tiempo
         if determinante_original != 0:
             longitud = len(datos)
             for i in range(longitud):
@@ -100,7 +98,8 @@ def solucion(datos, resultados):
                 
                 matrices.append(matriz_auxiliar)
                 determinantes.append(determinante_base(matriz_auxiliar))
-
+            fin_de_tiempo_total = time.time()
+            tiempo_total = fin_de_tiempo_total - inicio_de_tiempo
             mostrar = True
             while mostrar:
                 clean()
@@ -111,6 +110,10 @@ def solucion(datos, resultados):
                 for i in range(len(determinantes)):
                     resultado = round(determinantes[i]/determinante_original, 5)
                     print(f'El valor {i+1} es: {resultado}')
+                print()
+                print(f'Tiempo de la primer matriz: {tiempo_determinante_original}')
+                print(f'Tiempo de proceso total: {tiempo_total}')
+                print()
                 opc = str(input('\n1.- Mas info\n2.- Menu\nElige una opcion: '))
                 if opc == '1':
                     mostrar = masinfo(datos, determinante_original, matrices, determinantes)
@@ -149,13 +152,22 @@ def masinfo(datos, determinante_original, matrices, determinantes):
             return False
         else:
             print('Opcion no valida intenta nuevamente')
-            input('Presiona Enter para continuar')
+            pause()
+
+
+def main():
+    clean()
+    n = int(input('Ingresa el tamaño de la matriz: '))
+    datos = []
+    resultados = []
+    for i in range(n):
+        datos.append([])
+        for _ in range(n):
+            datos[i].append(random.randrange(15))
+    for i in range(n):
+        resultados.append([])
+        resultados[i].append(random.randrange(5 * n, 100 * n))
+    solucion(datos, resultados)
 
 if __name__ == '__main__':
-    datos = [[3, 8, 1], [-4, 5, 7], [4, 2, -1]]
-    resultados = [[55], [30], [23]]
-    solucion(datos, resultados)
-
-    datos = [[1, 2, 4, -2], [5, 3, -8, 2], [7, -2, 10, -1], [11, 0, -1, -3]]
-    resultados = [[9], [-5], [29], [-4]]
-    solucion(datos, resultados)
+    main()
