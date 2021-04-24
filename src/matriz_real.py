@@ -1,9 +1,8 @@
-try:
-    from src.extras import clean, convert_float, pause
-except:
-    from extras import clean, convert_float, pause
+from src.extras import clean, convert_float, pause
+import json
 import time
 import random
+
 def imprimir_matriz(mat):
     try:
         filas = len(mat)
@@ -44,30 +43,50 @@ def determinante_base(mat):
     if longitud == 1:
         return mat[0][0]
     else:
+        diccionario_de_determinantes = {}
+        try:
+            with open('determinantes.json', 'r') as f:
+                diccionario_de_determinantes = json.load(f)
+        except:
+            pass
         determinante = 0
-        resultados_cofactores = []
-        for i in range(longitud):
-            matriz_auxiliar = []
-            for j in range(longitud - 1):
-                matriz_auxiliar.append([])
-                for k in range(longitud - 1):
-                    matriz_auxiliar[j].append(1)
-            auxi=0
-            for j in range(longitud - 1):
-                if j==i: auxi+=1
-                auxj=1
-                for k in range(longitud - 1):
-                    matriz_auxiliar[j][k] = mat[j+auxi][k+auxj]
-            a = mat[i][0]
-            b = determinante_base(matriz_auxiliar)
-            c = a * b
-            imprimir_matriz(mat)
-            resultados_cofactores.append(c)
-        for i in range(len(resultados_cofactores)):
-            if i % 2 == 0:
-                determinante += resultados_cofactores[i]
-            else:
-                determinante -= resultados_cofactores[i]
+        try:
+            det = diccionario_de_determinantes[str(mat)]
+            #clean()
+            print('ENTRO Y TOMO DETERMINANTE :D ')
+            print(f'{mat} : {det}')
+            #pause()
+            return det
+        except:
+            #clean()
+            print('no entro: ')
+            print(f'{mat}')
+            #pause()
+            resultados_cofactores = []
+            for i in range(longitud):
+                matriz_auxiliar = []
+                for j in range(longitud - 1):
+                    matriz_auxiliar.append([])
+                    for k in range(longitud - 1):
+                        matriz_auxiliar[j].append(1)
+                auxi=0
+                for j in range(longitud - 1):
+                    if j==i: auxi+=1
+                    auxj=1
+                    for k in range(longitud - 1):
+                        matriz_auxiliar[j][k] = mat[j+auxi][k+auxj]
+                a = mat[i][0]
+                b = determinante_base(matriz_auxiliar)
+                c = a * b
+                resultados_cofactores.append(c)
+            for i in range(len(resultados_cofactores)):
+                if i % 2 == 0:
+                    determinante += resultados_cofactores[i]
+                else:
+                    determinante -= resultados_cofactores[i]
+        diccionario_de_determinantes[str(mat)] = determinante
+        with open('determinantes.json', 'w') as f:
+            json.dump(diccionario_de_determinantes, f, indent=4)   
         return determinante
 
 def solucion(datos, resultados):
@@ -75,7 +94,6 @@ def solucion(datos, resultados):
     filas = len(datos)
     res_long = len(resultados)
     columnas = len(datos[0])
-
     if filas == columnas and res_long == filas:
         inicio_de_tiempo = time.time()
         matrices = []
@@ -98,7 +116,7 @@ def solucion(datos, resultados):
                 determinantes.append(determinante_base(matriz_auxiliar))
             fin_de_tiempo_total = time.time()
             tiempo_total = fin_de_tiempo_total - inicio_de_tiempo
-            mostrar = True
+            mostrar = False
             while mostrar:
                 clean()
                 print('Datos')
@@ -156,16 +174,26 @@ def masinfo(datos, determinante_original, matrices, determinantes):
 def main():
     clean()
     n = int(input('Ingresa el tamaño de la matriz: '))
-    datos = []
-    resultados = []
-    for i in range(n):
-        datos.append([])
-        for _ in range(n):
-            datos[i].append(random.randrange(15))
-    for i in range(n):
-        resultados.append([])
-        resultados[i].append(random.randrange(5 * n, 100 * n))
-    solucion(datos, resultados)
+    veces = int(input('Ingresa el numero de veces a realizar: '))
+    inicio = time.time()
+    for vez in range(veces):
+        datos = []
+        #resultados = []
+        for i in range(n):
+            datos.append([])
+            for _ in range(n):
+                datos[i].append(random.randrange(15))
+        """ for i in range(n):
+            resultados.append([])
+            resultados[i].append(random.randrange(5 * n, 100 * n))
+        solucion(datos, resultados) """
+        determinante_base(datos)
+    fin = time.time()
+    total = fin - inicio
+    print('Terminado, se limpiara pantalla')
+    pause()
+    clean()
+    print(f'Tiempo total en tomar {veces} determinantes de {n}x{n}: {total}')
 
 if __name__ == '__main__':
     main()

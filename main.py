@@ -14,7 +14,8 @@ def main():
         #opc = menus.main()
         opc = 1
         if opc == 1:
-            reales = menus.size()
+            #reales = menus.size()
+            reales = 369
             if reales == 1:
                 datos = matrices.ingresar_matriz(3,3,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(3,1,'Ingresa los resultados: ')
@@ -28,6 +29,9 @@ def main():
                 datos = matrices.ingresar_matriz(n,n,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(n,1,'Ingresa los resultados: ')
                 matrices.solucion(datos, resultados)
+            elif reales == 369:
+                matrices.main()
+                show_menu = False
             else:
                 opc = 3
                 show_menu = False
@@ -54,7 +58,6 @@ def main():
             sleep(.5)
             clean()
             show_menu = False
-
 
 # ------------- Entry Point --------
 if __name__ == '__main__':
