@@ -3,6 +3,17 @@ import json
 import time
 import random
 
+
+encontradas = 0
+no_encontradas = 0
+"""try:
+    print('Iniciando...')
+    with open('determinantes.json', 'r') as f:
+        diccionario_de_determinantes = json.load(f)
+    clean()
+except:
+    diccionario_de_determinantes = {}
+"""
 def imprimir_matriz(mat):
     try:
         filas = len(mat)
@@ -39,28 +50,38 @@ def ingresar_matriz(filas, columnas, text=''):
     return ma
 
 def determinante_base(mat):
+    #global diccionario_de_determinantes
+    global encontradas
+    global no_encontradas
     longitud = len(mat)
     if longitud == 1:
         return mat[0][0]
     else:
-        diccionario_de_determinantes = {}
-        try:
-            with open('determinantes.json', 'r') as f:
-                diccionario_de_determinantes = json.load(f)
-        except:
-            pass
         determinante = 0
         try:
-            det = diccionario_de_determinantes[str(mat)]
+            #print('Iniciando...')
+            with open(f'determinantes_{longitud}x{longitud}.json', 'r') as f:
+                diccionario_de_determinantes = json.load(f)
             #clean()
-            print('ENTRO Y TOMO DETERMINANTE :D ')
-            print(f'{mat} : {det}')
+        except:
+            diccionario_de_determinantes = {}
+        try:
+            det = diccionario_de_determinantes[str(mat)]
+            encontradas += 1
+            #clean()
+            """ if longitud > 2 and False:
+                imprimir_matriz(mat)
+                print('ENTRO Y TOMO DETERMINANTE :D ')
+                print(f'{mat} : {det}')
+                print() """
             #pause()
             return det
         except:
             #clean()
-            print('no entro: ')
-            print(f'{mat}')
+            #imprimir_matriz(mat)
+            #print('no entro: ')
+            #print(f'{mat}')
+            #print()
             #pause()
             resultados_cofactores = []
             for i in range(longitud):
@@ -84,10 +105,12 @@ def determinante_base(mat):
                     determinante += resultados_cofactores[i]
                 else:
                     determinante -= resultados_cofactores[i]
-        diccionario_de_determinantes[str(mat)] = determinante
-        with open('determinantes.json', 'w') as f:
-            json.dump(diccionario_de_determinantes, f, indent=4)   
-        return determinante
+            diccionario_de_determinantes[str(mat)] = determinante
+            with open(f'determinantes_{longitud}x{longitud}.json', 'w') as f:
+                json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)
+            
+            no_encontradas += 1
+            return determinante
 
 def solucion(datos, resultados):
     clean()
@@ -172,28 +195,43 @@ def masinfo(datos, determinante_original, matrices, determinantes):
 
 
 def main():
+    global encontradas
+    global no_encontradas
     clean()
     n = int(input('Ingresa el tamaño de la matriz: '))
     veces = int(input('Ingresa el numero de veces a realizar: '))
-    inicio = time.time()
-    for vez in range(veces):
-        datos = []
-        #resultados = []
-        for i in range(n):
-            datos.append([])
-            for _ in range(n):
-                datos[i].append(random.randrange(15))
-        """ for i in range(n):
-            resultados.append([])
-            resultados[i].append(random.randrange(5 * n, 100 * n))
-        solucion(datos, resultados) """
-        determinante_base(datos)
-    fin = time.time()
-    total = fin - inicio
-    print('Terminado, se limpiara pantalla')
-    pause()
+    comparaciones = int(input('Numero de comparaciones: '))
+    #veces = 100000
     clean()
-    print(f'Tiempo total en tomar {veces} determinantes de {n}x{n}: {total}')
+    for bucle in range(comparaciones):
+        encontradas = 0
+        no_encontradas = 0
+        inicio = time.time()
+        for vez in range(veces):
+            datos = []
+            #resultados = []
+            for i in range(n):
+                datos.append([])
+                for _ in range(n):
+                    datos[i].append(random.randrange(-10, 11))
+            """ for i in range(n):
+                resultados.append([])
+                resultados[i].append(random.randrange(5 * n, 100 * n))
+            solucion(datos, resultados) """
+            determinante_base(datos)
+        fin = time.time()
+        total = fin - inicio
+        #imprimir_matriz(datos)
+        print(f'{bucle + 1}.- Tiempo total en tomar {veces} determinantes de {n}x{n}: {total}')
+        print(f'Encontradas: {encontradas} --- No encontradas: {no_encontradas}')
+        print(f'Total: {encontradas + no_encontradas}')
+        print('--------------------------\n')
+        """with open('determinantes.json', 'w') as f:
+                json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)"""
+    print('Cerrando...')
+    
+    
+    #clean()
 
 if __name__ == '__main__':
     main()
