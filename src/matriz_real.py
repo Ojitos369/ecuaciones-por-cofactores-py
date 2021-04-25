@@ -6,14 +6,15 @@ import random
 
 encontradas = 0
 no_encontradas = 0
-"""try:
+try:
+    clean()
     print('Iniciando...')
     with open('determinantes.json', 'r') as f:
         diccionario_de_determinantes = json.load(f)
     clean()
 except:
     diccionario_de_determinantes = {}
-"""
+
 def imprimir_matriz(mat):
     try:
         filas = len(mat)
@@ -49,25 +50,20 @@ def ingresar_matriz(filas, columnas, text=''):
     pause()
     return ma
 
-def determinante_base(mat):
-    #global diccionario_de_determinantes
+def determinante_base(mat, limite=False):
+    global diccionario_de_determinantes
     global encontradas
     global no_encontradas
     longitud = len(mat)
+    lon2 = len(mat[0])
+    if not limite: limite = longitud
     if longitud == 1:
         return mat[0][0]
-    else:
+    elif longitud == lon2:
         determinante = 0
         try:
-            #print('Iniciando...')
-            with open(f'determinantes_{longitud}x{longitud}.json', 'r') as f:
-                diccionario_de_determinantes = json.load(f)
-            #clean()
-        except:
-            diccionario_de_determinantes = {}
-        try:
-            det = diccionario_de_determinantes[str(mat)]
-            encontradas += 1
+            det = diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)]
+            #encontradas += 1
             #clean()
             """ if longitud > 2 and False:
                 imprimir_matriz(mat)
@@ -97,7 +93,7 @@ def determinante_base(mat):
                     for k in range(longitud - 1):
                         matriz_auxiliar[j][k] = mat[j+auxi][k+auxj]
                 a = mat[i][0]
-                b = determinante_base(matriz_auxiliar)
+                b = determinante_base(matriz_auxiliar, limite)
                 c = a * b
                 resultados_cofactores.append(c)
             for i in range(len(resultados_cofactores)):
@@ -105,11 +101,14 @@ def determinante_base(mat):
                     determinante += resultados_cofactores[i]
                 else:
                     determinante -= resultados_cofactores[i]
-            diccionario_de_determinantes[str(mat)] = determinante
-            with open(f'determinantes_{longitud}x{longitud}.json', 'w') as f:
-                json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)
-            
-            no_encontradas += 1
+            if longitud <= limite:
+            #if True:
+                try:
+                    diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)] = determinante
+                except:
+                    diccionario_de_determinantes[f'{longitud}x{longitud}'] = {}
+                    diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)] = determinante
+            #no_encontradas += 1
             return determinante
 
 def solucion(datos, resultados):
@@ -198,10 +197,12 @@ def main():
     global encontradas
     global no_encontradas
     clean()
-    n = int(input('Ingresa el tamaño de la matriz: '))
-    veces = int(input('Ingresa el numero de veces a realizar: '))
-    comparaciones = int(input('Numero de comparaciones: '))
-    #veces = 100000
+    #n = int(input('Ingresa el tamaño de la matriz: '))
+    n = 3
+    #veces = int(input('Ingresa el numero de veces a realizar: '))
+    veces = 50000
+    #comparaciones = int(input('Numero de comparaciones: '))
+    comparaciones = 100
     clean()
     for bucle in range(comparaciones):
         encontradas = 0
@@ -218,17 +219,17 @@ def main():
                 resultados.append([])
                 resultados[i].append(random.randrange(5 * n, 100 * n))
             solucion(datos, resultados) """
-            determinante_base(datos)
+            determinante_base(datos, 4)
         fin = time.time()
         total = fin - inicio
         #imprimir_matriz(datos)
         print(f'{bucle + 1}.- Tiempo total en tomar {veces} determinantes de {n}x{n}: {total}')
         print(f'Encontradas: {encontradas} --- No encontradas: {no_encontradas}')
-        print(f'Total: {encontradas + no_encontradas}')
+        print(f'Total: {encontradas + no_encontradas}\t\t{bucle + 1} de {comparaciones}')
         print('--------------------------\n')
-        """with open('determinantes.json', 'w') as f:
-                json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)"""
     print('Cerrando...')
+    with open('determinantes.json', 'w') as f:
+            json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)
     
     
     #clean()
