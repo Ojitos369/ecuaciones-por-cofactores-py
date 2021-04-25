@@ -50,13 +50,13 @@ def ingresar_matriz(filas, columnas, text=''):
     pause()
     return ma
 
-def determinante_base(mat, limite=False):
+def determinante_base(mat, limite=0):
     global diccionario_de_determinantes
     global encontradas
     global no_encontradas
     longitud = len(mat)
     lon2 = len(mat[0])
-    if not limite: limite = longitud
+    if limite == 0: limite = longitud + 1
     if longitud == 1:
         return mat[0][0]
     elif longitud == lon2:
@@ -108,6 +108,8 @@ def determinante_base(mat, limite=False):
                 except:
                     diccionario_de_determinantes[f'{longitud}x{longitud}'] = {}
                     diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)] = determinante
+                with open('determinantes.json', 'w') as f:
+                    json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)
             #no_encontradas += 1
             return determinante
 
@@ -138,7 +140,7 @@ def solucion(datos, resultados):
                 determinantes.append(determinante_base(matriz_auxiliar))
             fin_de_tiempo_total = time.time()
             tiempo_total = fin_de_tiempo_total - inicio_de_tiempo
-            mostrar = False
+            mostrar = True
             while mostrar:
                 clean()
                 print('Datos')
@@ -197,12 +199,12 @@ def main():
     global encontradas
     global no_encontradas
     clean()
-    #n = int(input('Ingresa el tamaño de la matriz: '))
-    n = 3
-    #veces = int(input('Ingresa el numero de veces a realizar: '))
-    veces = 50000
-    #comparaciones = int(input('Numero de comparaciones: '))
-    comparaciones = 100
+    n = int(input('Ingresa el tamaño de la matriz: '))
+    #n = 3
+    veces = int(input('Ingresa el numero de veces a realizar: '))
+    #veces = 50000
+    comparaciones = int(input('Numero de comparaciones: '))
+    #comparaciones = 100
     clean()
     for bucle in range(comparaciones):
         encontradas = 0
@@ -219,7 +221,7 @@ def main():
                 resultados.append([])
                 resultados[i].append(random.randrange(5 * n, 100 * n))
             solucion(datos, resultados) """
-            determinante_base(datos, 4)
+            determinante_base(datos, n)
         fin = time.time()
         total = fin - inicio
         #imprimir_matriz(datos)
