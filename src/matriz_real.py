@@ -260,7 +260,7 @@ def main():
                 datos.append([])
                 donde.append(0)
                 for _ in range(n):
-                    datos[i].append(random.randrange(-10, 11))
+                    datos[i].append(random.randrange(-2, 3))
                     #datos[i].append(random.randrange(0, 2))
             """ for i in range(n):
                 resultados.append([])
