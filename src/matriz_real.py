@@ -1,19 +1,61 @@
 from src.extras import clean, convert_float, pause
+from conexion import conectar
+import pymysql as mysql
 import json
 import time
 import random
+import sys
 
-
+encontradas_en_db = 0
+donde = []
+iguales = 0
 encontradas = 0
 no_encontradas = 0
-try:
+conexion = conectar()
+cur = conexion.cursor()
+determinantes_no_encontradas = {}
+""" try:
     clean()
     print('Iniciando...')
     with open('determinantes.json', 'r') as f:
         diccionario_de_determinantes = json.load(f)
     clean()
 except:
-    diccionario_de_determinantes = {}
+    diccionario_de_determinantes = {} """
+
+def contar_caracteres(cadena, caracter):
+    contador = 0
+    for i in range(len(cadena)):
+        if cadena[i] == caracter:
+            contador += 1
+    return contador
+
+def agregar(diccionario):
+    i = 0
+    print()
+    datos_totales = len(diccionario) - 1
+    for nombre, det in diccionario.items():
+        n = contar_caracteres(nombre, '[') - 1
+        crear_tabla(n)
+        query = f"INSERT INTO det_{n}x{n} (nombre, determinante) VALUES ('{nombre}', {det});"
+        #print(f'{i}.- "{query}"')
+        sys.stdout.write("\033[F")
+        print(f'Actualizando datos: {i}/{datos_totales} --- Faltan: {datos_totales - i} ')
+        i += 1
+        try:
+            cur.execute(query)
+        except:
+            pass
+
+
+def crear_tabla(n):
+    query = f"""CREATE TABLE det_{n}x{n} (id INT(255) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+nombre VARCHAR(1000),
+determinante VARCHAR(1000))"""
+    try:
+        cur.execute(query)
+    except:
+        pass
 
 def imprimir_matriz(mat):
     try:
@@ -50,34 +92,39 @@ def ingresar_matriz(filas, columnas, text=''):
     pause()
     return ma
 
-def determinante_base(mat, limite=0):
-    global diccionario_de_determinantes
+def determinante_base(mat):
+    global determinantes_no_encontradas
     global encontradas
     global no_encontradas
+    global encontradas_en_db
+    global iguales
     longitud = len(mat)
     lon2 = len(mat[0])
-    if limite == 0: limite = longitud + 1
     if longitud == 1:
         return mat[0][0]
     elif longitud == lon2:
-        determinante = 0
         try:
-            det = diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)]
-            #encontradas += 1
-            #clean()
-            """ if longitud > 2 and False:
-                imprimir_matriz(mat)
-                print('ENTRO Y TOMO DETERMINANTE :D ')
-                print(f'{mat} : {det}')
-                print() """
-            #pause()
+            determinante = 0
+            query = f"SELECT determinante FROM det_{longitud}x{longitud} WHERE nombre = '{mat}';"
+            cur.execute(query)
+            det = cur.fetchall()
+            try:
+                #print(f'determinante de base en {mat} : {det}')
+                #pause()
+                det = float(det[0][0])
+                #print(f'Determinante despues de float: {det}')
+                #print(f'Tomo de base de datos')
+                encontradas_en_db += 1
+            except:
+                det = determinantes_no_encontradas[str(mat)]
+                #print(f'Entro al diciconario en {mat}')
+                iguales += 1
+                #pause()
+            encontradas += 1
             return det
         except:
-            #clean()
-            #imprimir_matriz(mat)
-            #print('no entro: ')
-            #print(f'{mat}')
-            #print()
+            determinante = 0
+            #print(f'Entro matriz {mat}')
             #pause()
             resultados_cofactores = []
             for i in range(longitud):
@@ -93,7 +140,7 @@ def determinante_base(mat, limite=0):
                     for k in range(longitud - 1):
                         matriz_auxiliar[j][k] = mat[j+auxi][k+auxj]
                 a = mat[i][0]
-                b = determinante_base(matriz_auxiliar, limite)
+                b = determinante_base(matriz_auxiliar)
                 c = a * b
                 resultados_cofactores.append(c)
             for i in range(len(resultados_cofactores)):
@@ -101,16 +148,10 @@ def determinante_base(mat, limite=0):
                     determinante += resultados_cofactores[i]
                 else:
                     determinante -= resultados_cofactores[i]
-            if longitud <= limite:
-            #if True:
-                try:
-                    diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)] = determinante
-                except:
-                    diccionario_de_determinantes[f'{longitud}x{longitud}'] = {}
-                    diccionario_de_determinantes[f'{longitud}x{longitud}'][str(mat)] = determinante
-                with open('determinantes.json', 'w') as f:
-                    json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)
-            #no_encontradas += 1
+                    
+            determinantes_no_encontradas[str(mat)] = determinante
+            no_encontradas += 1
+            donde[longitud - 2] += 1
             return determinante
 
 def solucion(datos, resultados):
@@ -198,6 +239,7 @@ def masinfo(datos, determinante_original, matrices, determinantes):
 def main():
     global encontradas
     global no_encontradas
+    global determinantes_no_encontradas
     clean()
     n = int(input('Ingresa el tamaño de la matriz: '))
     #n = 3
@@ -205,7 +247,8 @@ def main():
     #veces = 50000
     comparaciones = int(input('Numero de comparaciones: '))
     #comparaciones = 100
-    clean()
+    #clean()
+    datos_promedio = []
     for bucle in range(comparaciones):
         encontradas = 0
         no_encontradas = 0
@@ -215,13 +258,15 @@ def main():
             #resultados = []
             for i in range(n):
                 datos.append([])
+                donde.append(0)
                 for _ in range(n):
                     datos[i].append(random.randrange(-10, 11))
+                    #datos[i].append(random.randrange(0, 2))
             """ for i in range(n):
                 resultados.append([])
                 resultados[i].append(random.randrange(5 * n, 100 * n))
             solucion(datos, resultados) """
-            determinante_base(datos, n)
+            det = determinante_base(datos)
         fin = time.time()
         total = fin - inicio
         #imprimir_matriz(datos)
@@ -229,12 +274,26 @@ def main():
         print(f'Encontradas: {encontradas} --- No encontradas: {no_encontradas}')
         print(f'Total: {encontradas + no_encontradas}\t\t{bucle + 1} de {comparaciones}')
         print('--------------------------\n')
-    print('Cerrando...')
-    with open('determinantes.json', 'w') as f:
-            json.dump(diccionario_de_determinantes, f, indent = 4, sort_keys=True)
-    
-    
+
+        datos_promedio.append(total)
+    promedio = sum(datos_promedio) / len(datos_promedio)
+    print(f'El promedio de tiempo fue {promedio} --- Tiempo total: {sum(datos_promedio)}')
+    print(f'Salvadas de repetir en diccionario: {iguales} --- Encontradas en db: {encontradas_en_db}')
+    print()
+    print('Actualizando datos...')
+
+    nombre = '['
+    for _ in range(n - 1):
+        nombre += '['
+    for i in range(len(donde)):
+        if donde[i] > 0:
+            print(f'Agregando a la matriz {i + 2}x{i + 2}: {donde[i]}')
+    determinantes_no_encontradas[f'{nombre}'] = 0
+    agregar(determinantes_no_encontradas)
+    determinantes_no_encontradas = {}
     #clean()
+
 
 if __name__ == '__main__':
     main()
+    conexion.close()

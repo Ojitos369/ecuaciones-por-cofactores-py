@@ -14,8 +14,8 @@ def main():
         #opc = menus.main()
         opc = 1
         if opc == 1:
-            reales = menus.size()
-            #reales = 369
+            reales = 369
+            #reales = menus.size()
             if reales == 1:
                 datos = matrices.ingresar_matriz(3,3,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(3,1,'Ingresa los resultados: ')
