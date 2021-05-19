@@ -148,10 +148,11 @@ def determinante_base(mat):
                     determinante += resultados_cofactores[i]
                 else:
                     determinante -= resultados_cofactores[i]
-                    
-            determinantes_no_encontradas[str(mat)] = determinante
-            no_encontradas += 1
-            donde[longitud - 2] += 1
+            try:
+                determinantes_no_encontradas[str(mat)] = determinante
+                no_encontradas += 1
+                donde[longitud - 2] += 1
+            except: pass
             return determinante
 
 def solucion(datos, resultados):
@@ -293,6 +294,17 @@ def main():
     determinantes_no_encontradas = {}
     #clean()
 
+def aleatoria():
+    n = int(input('Ingresa el tramaño de la matriz: '))
+    datos = []
+    res = []
+    for i in range(n):
+        datos.append([])
+        res.append([])
+        res[i].append(random.randrange(-10,11) * 10)
+        for j in range(n):
+            datos[i].append(random.randrange(-10,11))
+    solucion(datos, res)
 
 if __name__ == '__main__':
     main()

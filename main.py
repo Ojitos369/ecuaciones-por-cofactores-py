@@ -15,7 +15,7 @@ def main():
         opc = 1
         if opc == 1:
             reales = 369
-            #reales = menus.size()
+            reales = menus.size()
             if reales == 1:
                 datos = matrices.ingresar_matriz(3,3,'Ingresa los datos de la matriz de datos: ')
                 resultados = matrices.ingresar_matriz(3,1,'Ingresa los resultados: ')
@@ -31,7 +31,10 @@ def main():
                 matrices.solucion(datos, resultados)
             elif reales == 369:
                 matrices.main()
-                show_menu = False
+                #show_menu = False
+            elif reales == 365:
+                clean()
+                matrices.aleatoria()
             else:
                 opc = 3
                 show_menu = False

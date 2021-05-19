@@ -14,7 +14,7 @@ def size():
 4.- Cancelar
 Elige una opcion: """)
         option = convert_int(option)
-        if option > 0 and option < 5:
+        if (option > 0 and option < 5) or option == 369 or option == 365:
             incorrecto = False
         else:
             print('Opcion no valida. Intenta nuevamente')
